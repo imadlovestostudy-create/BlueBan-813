@@ -14,6 +14,7 @@ const STATIC = process.env.BLUEBAN_STATIC === "1";
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH || "",
   // Trailing slashes keep Cloudflare Pages' static routing predictable for
   // nested routes such as /judge and /spectra.
   trailingSlash: STATIC,
@@ -29,3 +30,4 @@ const nextConfig = {
       }),
 };
 export default nextConfig;
+

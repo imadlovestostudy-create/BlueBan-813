@@ -19,10 +19,8 @@ function View() {
   const router = useRouter();
   const sensor = useSearchParams().get("sensor") || "S2";
   const tle = useStatic<TleSet>("registers/tle_eo.json");
-  const aois = useEngineQuery((e) => e.aois()).data || [];
-  const list = useEngineQuery((e) => e.listIncidents()).data || [];
-  const heroId = list.find((i) => i.role !== "negative_control" && i.aoi_id?.startsWith("AE") && i.status === "UNDER_REVIEW")?.id || list.find((i) => i.aoi_id?.startsWith("AE"))?.id || null;
-  const hero = useEngineQuery((e) => (heroId ? e.getIncident(heroId) : Promise.resolve(null)), [heroId]).data || null;
+  const aois: import("@/lib/engine/types").Aoi[] = [];
+  const hero = null;
   const exit = () => { if (window.history.length > 1) router.back(); else router.push("/"); };
   return (
     <div className="fixed inset-0 z-[80] bg-[#02040b]">

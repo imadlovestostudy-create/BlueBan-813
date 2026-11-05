@@ -1,0 +1,11 @@
+const ts=require('typescript');const fs=require('fs');const vm=require('vm');const assert=require('node:assert/strict');
+const code=ts.transpileModule(fs.readFileSync('lib/soil.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS}}).outputText;
+const sandbox={exports:{},Date,Number,Error};vm.runInNewContext(code,sandbox);const soil=sandbox.exports;
+const sample={id:'test',site:'Abu Dhabi',date:'2026-01-01',lab:'test laboratory',depthCm:100,density:0.5,carbonPct:2,areaHa:1,ph:null,moisturePct:null};
+assert.equal(soil.stock(soil.validateSample(sample)),100);
+assert.equal(soil.stock({...sample,areaHa:2}),200);
+for(const edit of [{carbonPct:101},{density:0},{depthCm:-1},{areaHa:NaN},{ph:15},{moisturePct:-1},{date:'2099-01-01'},{lab:''}])assert.throws(()=>soil.validateSample({...sample,...edit}));
+assert.equal(soil.sampleAlerts(sample,Date.parse('2026-01-10')).length,3);
+assert.match(soil.recommendation('healthy',false),/Collect/);
+assert.match(soil.recommendation('degraded',true),/Inspect/);
+console.log('Soil domain checks passed: stock units, scaling, invalid evidence, stale evidence and recommendation gating.');

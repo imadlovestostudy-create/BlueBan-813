@@ -47,14 +47,7 @@ function UaeFlag({ size = 18 }: { size?: number }) {
 }
 
 export function useShellData() {
-  const inc = useEngineQuery((e) => e.listIncidents());
-  const aois = useEngineQuery((e) => e.aois());
-  const models = useEngineQuery((e) => e.models("triage"));
-  const labels = useEngineQuery((e) => e.labels("triage"));
-  return {
-    incidents: inc.data || [], aois: aois.data || [], models: models.data || [], labels: labels.data || [],
-    loading: inc.loading || aois.loading || models.loading || labels.loading,
-  };
+  return {incidents: [] as IncidentSummary[], aois: [] as Aoi[], models: [] as ModelRecord[], labels: [] as LabelRow[], loading:false};
 }
 
 function TopBar({ aois, models, onMenu }: { aois: Aoi[]; models: ModelRecord[]; onMenu: () => void }) {
@@ -82,9 +75,9 @@ function TopBar({ aois, models, onMenu }: { aois: Aoi[]; models: ModelRecord[]; 
       </Link>
       <div className="hidden h-11 w-px shrink-0 bg-edge xl:block" />
       <div className="hidden min-w-0 flex-1 items-center gap-2 xl:flex">
-        <TopStat className="hidden wide:flex" icon={<Dot color={fresh != null && fresh < 6 ? "#23D484" : "#FFC23D"} pulse />} k="Satellite monitoring" v="UAE coastline" sub={`${uae.length} areas`} />
+        <TopStat className="hidden wide:flex" icon={<Dot color={fresh != null && fresh < 6 ? "#23D484" : "#FFC23D"} pulse />} k="Soil coverage" v="UAE soil regions" sub="7 emirates + Al Dhafra" />
         <TopStat icon={<BrainCircuit size={20} className="text-nominal" />} k="Active model"
-          v={prod ? <span>v{prod.version} <span className="text-nominal">· Live</span></span> : "loading"} sub={prod?.model_type === "rules" ? "rule-based triage" : prod ? "learned triage" : ""} />
+          v={prod ? <span>v{prod.version} <span className="text-nominal">· Live</span></span> : "Not trained"} sub={prod?.model_type === "rules" ? "soil model" : prod ? "soil model" : ""} />
         <TopStat icon={<CalendarClock size={20} className="text-beam2" />} k="Last image" v={fmt.utc(last, false)}
           sub={last ? `${new Date(last).toISOString().slice(11, 16)} UTC · Sentinel-2` : ""} title="Latest usable image over the monitored areas. Sentinel-2 detects; Sentinel-3 cross-checks; 813 is simulated." />
         <TopStat icon={<Satellite size={20} className="text-cyan" />} k="Next pass" title="Expected next Sentinel-2 pass: the last pass plus whole 10-day repeat cycles. A schedule, not a promise."
@@ -138,22 +131,22 @@ function MissionRail({ incidents, aois, models, labels, className = "" }: { inci
   const newLabels = labels.filter((l) => l.source !== "cross_sensor_reference" && (!prod?.promoted_at || l.created_at > prod.promoted_at));
   const uae = aois.filter((a) => a.id.startsWith("AE-"));
   const items: { href: string; label: string; sub: string; icon: React.ReactNode; state: RailState; note: string; badge?: number }[] = [
-    { href: "/watch", label: "WATCH", sub: "Monitoring", icon: <Binoculars size={22} />, state: uae.length ? "ok" : "idle", note: `${uae.length} areas` },
-    { href: "/incidents", label: "DETECT", sub: "Incident queue", icon: <Radar size={22} />, state: review.length ? "attention" : "ok", note: `${open.length} open`, badge: open.length },
-    { href: "/spectra", label: "DIAGNOSE", sub: "Colour fingerprint", icon: <Waves size={22} />, state: "ok", note: "S2 + 813 sim" },
+    { href: "/watch", label: "WATCH", sub: "Soil monitoring", icon: <Binoculars size={22} />, state: uae.length ? "ok" : "idle", note: `${uae.length} areas` },
+    { href: "/incidents", label: "DETECT", sub: "Soil evidence", icon: <Radar size={22} />, state: review.length ? "attention" : "ok", note: `${open.length} open`, badge: open.length },
+    { href: "/spectra", label: "DIAGNOSE", sub: "Soil diagnosis", icon: <Waves size={22} />, state: "ok", note: "Field evidence" },
     { href: "/field", label: "VERIFY", sub: "Field samples", icon: <ShieldCheck size={22} />, state: field.length ? "attention" : review.length ? "attention" : "ok", note: `${review.length} to review` },
-    { href: "/incident", label: "ACT", sub: "Investigation", icon: <Siren size={22} />, state: open.length ? "attention" : "idle", note: open.length ? "actions due" : "none" },
-    { href: "/learn", label: "LEARN", sub: "Model improvement", icon: <Sparkles size={22} />, state: cand ? "attention" : "ok", note: cand ? "new model ready" : `${newLabels.length} new labels` },
+    { href: "/incident", label: "ACT", sub: "Restoration review", icon: <Siren size={22} />, state: open.length ? "attention" : "idle", note: open.length ? "actions due" : "none" },
+    { href: "/learn", label: "LEARN", sub: "Validation readiness", icon: <Sparkles size={22} />, state: cand ? "attention" : "ok", note: cand ? "new model ready" : `${newLabels.length} new labels` },
   ];
   const groups: { title: string; links: { href: string; label: string; icon: React.ReactNode }[] }[] = [
     { title: "Operations", links: [
-      { href: "/intakes", label: "INTAKE WATCH", icon: <Factory size={16} /> },
+      { href: "/intakes", label: "SOIL STATIONS", icon: <Factory size={16} /> },
       { href: "/assets", label: "ASSETS", icon: <Activity size={16} /> },
     ] },
     { title: "Evidence", links: [
       { href: "/validation", label: "VALIDATION", icon: <Gauge size={16} /> },
       { href: "/satellite", label: "SATELLITE VIEW", icon: <Satellite size={16} /> },
-      { href: "/inland", label: "INLAND · SHAWKA", icon: <Droplets size={16} /> },
+      { href: "/inland", label: "SOIL REGIONS", icon: <Droplets size={16} /> },
     ] },
     { title: "System", links: [
       { href: "/data", label: "DATA & SOURCES", icon: <Database size={16} /> },
@@ -164,7 +157,7 @@ function MissionRail({ incidents, aois, models, labels, className = "" }: { inci
   return (
     <nav aria-label="Main" className={`scroll-quiet shrink-0 flex-col gap-2 overflow-y-auto p-3 short:gap-1.5 short:p-2 mini:gap-1 ${className}`}>
       <Link href="/" aria-current={isActive("/") ? "page" : undefined} className={`flex items-center gap-2 whitespace-nowrap rounded-md px-3 py-2 text-[11.5px] font-bold tracking-[0.14em] mini:py-1.5 ${isActive("/") ? "bg-beam/15 text-ink" : "text-muted hover:text-ink"}`}>
-        <LayoutDashboard size={16} className="shrink-0" /> INCIDENT CONTROL
+        <LayoutDashboard size={16} className="shrink-0" /> SOIL CONTROL
       </Link>
       {items.map((it) => {
         const active = isActive(it.href);
@@ -206,7 +199,7 @@ function Footer({ incidents, aois, labels, models }: { incidents: IncidentSummar
   const queued = labels.filter((l) => l.source !== "cross_sensor_reference" && (!prod?.promoted_at || l.created_at > prod.promoted_at)).length;
   // [value, label, colour, which widths show it]
   const stats: [string | number, string, string, string][] = [
-    [open, "Active incidents", "#FF4D5E", "flex"], [uae.length, "Areas monitored", "#FFC23D", "flex"],
+    [open, "Soil alerts connected", "#FF4D5E", "flex"], [uae.length, "Sensor regions connected", "#FFC23D", "flex"],
     [scenes7, "Images (7 days)", "#EAF1FF", "hidden lg:flex"], [queued, "New labels", "#27C3F3", "hidden xl:flex"],
   ];
   return (

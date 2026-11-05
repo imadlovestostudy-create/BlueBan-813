@@ -1,16 +1,13 @@
-# ROOTS.AI soil adaptation
+# ROOTS.AI soil system
 
-The home page and /soil provide a blue presentation workspace for slides 7–10 of the supplied ROOTS.AI deck. Includes evidence status, editable carbon stock calculations, JSON statement export and researcher-selected restoration priorities.
+The original dashboard shell, map and satellite viewer are retained. Every application route now uses the soil workspace instead of the coastal incident engine. No coastal events, bloom classifications or water-quality predictions seed the soil system.
 
-## Data status
-This is a presentation prototype, not a deployed live soil recognition model. No soil sensor credentials or ground-truth training data were supplied. Coastal classifiers must not be used as soil classifiers. Existing satellite routes and acquisition code remain available unchanged: Sentinel-2 is the original primary source; Satellite 813 is simulated. Existing coastal routes remain reference tools and retain their original labels.
+Coverage: all seven UAE emirates and Al Dhafra / Western Region. Region bounding boxes are approximate catalogue search areas, not administrative boundaries. Each sample records its actual represented area.
 
-The default calculation is 1 ha × 100 cm × 0.5 g/cm³ × 2% = 100 Mg C. CO2-equivalent stock uses 44/12. It is not sequestration or a credit. No uncertainty is invented.
+Implemented: region selection, custom site bounds, Sentinel-2 catalogue queries for the last 30 days, laboratory sample validation and persistence, JSON imports, optional HTTPS feed polling every 60 seconds while open, dated stock calculations, evidence age/missing-data review flags, statement export and field-assessed restoration review. All data is browser-local. The map background is the original 2021 imagery.
 
-## Run
-From apps/web run npm ci and npm run dev. The soil page needs no backend; inherited satellite functionality follows the original README setup.
+Still required for an operational recognition service: a deployed soil raster processor, soil ground-truth dataset, trained and spatially validated classifier, sensor endpoints, server persistence, automated scheduled reports and calibrated uncertainty. The original Python coastal API remains upstream reference code and is not connected to the hosted soil app. Satellite 813 has no real feed here. Do not describe catalogue searches as live soil classification.
 
-## Required before live use
-Connect timestamped soil observations, land/cloud masks and field samples; train and spatially validate a soil-specific model; provide uncertainty and a review workflow. Weekly alerts and monthly scheduled reporting require a backend implementation.
+Stock method: depth cm × dry bulk density g/cm3 × organic carbon percent × represented hectares = Mg C. A single sample is extrapolated uniformly through its layer and area. It does not estimate monthly capture. Uncertainty and change are left undetermined. The export includes source sample, date, method and review notes.
 
-Original MIT attribution is retained in LICENSE. The PowerPoint is not redistributed in this repository.
+Run: npm ci and npm run dev in apps/web. Static deployment: BLUEBAN_STATIC=1 and NEXT_PUBLIC_BASE_PATH=/BlueBan-813 npm run build; configured output is apps/web/.next-static. Preserve the original MIT attribution.

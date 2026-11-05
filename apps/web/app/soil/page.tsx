@@ -1,1 +1,1 @@
-export { default } from "@/components/SoilDashboard";
+export { default } from "@/components/SoilSystem";

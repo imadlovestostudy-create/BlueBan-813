@@ -37,7 +37,7 @@ const hasAgreement = (i: Incident | null, ...keys: string[]) =>
 
 export const SENSORS: Record<SensorKey, SensorSpec> = {
   "813": {
-    key: "813", name: "Satellite 813", kind: "Hyperspectral, built for water", range: "400 – 1700 nm", res: "20 m (per spec) · ~205 bands",
+    key: "813", name: "Satellite 813", kind: "Hyperspectral research sensor", range: "400 – 1700 nm", res: "20 m (per spec) · ~205 bands",
     swath_km: null, swath_src: "not published", color: "#FFC23D", sats: ["813"], optical: true, illustrative: true,
     bands: Array.from({ length: 64 }, (_, i) => [400 + i * 20, 6] as [number, number]),
     note: "Every 813 value shown is SIMULATED from real Planet Tanager-1 data. The team has no access to real 813 data (checked while signed in, 30 Sep 2026). Its orbit and spacecraft are not published, so the 3D view shows an illustrative orbit and marker.",
@@ -47,8 +47,8 @@ export const SENSORS: Record<SensorKey, SensorSpec> = {
     key: "S2", name: "Sentinel-2", kind: "Multispectral camera", range: "443 – 2190 nm, 13 bands", res: "10 / 20 / 60 m · every 2–5 days",
     swath_km: 290, swath_src: "ESA Sentinel-2 User Handbook", color: "#27C3F3", sats: ["S2A", "S2B", "S2C"], optical: true,
     bands: [[443, 21], [492, 66], [560, 36], [665, 31], [704, 15], [740, 15], [783, 20], [833, 106], [865, 21], [945, 20], [1375, 31], [1610, 91], [2190, 175]],
-    note: "Main detection satellite, at high resolution. Sun glint is removed, then each pixel is compared with the same season in past years.",
-    status: (i) => (hasSource(i, "Sentinel-2") || hasSource(i, "MSI") ? "USED IN THIS INCIDENT" : "ROUTINE MONITORING"),
+    note: "Sentinel-2 scene catalogue supports soil site observation. Soil raster processing and field calibration are required before classification.",
+    status: (i) => (hasSource(i, "Sentinel-2") || hasSource(i, "MSI") ? "SOURCE AVAILABLE" : "CATALOGUE AVAILABLE"),
   },
   S3: {
     key: "S3", name: "Sentinel-3", kind: "Ocean-colour camera", range: "400 – 1020 nm, 21 bands", res: "300 m · daily",
@@ -60,8 +60,8 @@ export const SENSORS: Record<SensorKey, SensorSpec> = {
   S1: {
     key: "S1", name: "Sentinel-1 radar", kind: "Radar, sees through cloud", range: "5.405 GHz", res: "10 m · every 6–12 days",
     swath_km: 250, swath_src: "ESA Sentinel-1 IW mode", color: "#8B7BFF", sats: ["S1A", "S1C", "S1D"], optical: false, bands: [],
-    note: "Optional check for dark slicks. A dark patch can be oil or a look-alike (calm wind, natural film, rain). It never means oil on its own.",
-    status: (i) => (hasAgreement(i, "SAR", "S1") ? "USED IN THIS INCIDENT" : "OPTIONAL"),
+    note: "Radar context is available for future soil moisture research; no calibrated soil moisture retrieval is connected.",
+    status: (i) => (hasAgreement(i, "SAR", "S1") ? "SOURCE AVAILABLE" : "OPTIONAL"),
   },
   LS: {
     key: "LS", name: "Landsat 8/9", kind: "Camera + thermal sensor", range: "443 – 2200 nm + 10.9 µm thermal", res: "30 m / 100 m thermal · 8 days",

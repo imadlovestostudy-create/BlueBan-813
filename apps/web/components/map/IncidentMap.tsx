@@ -61,6 +61,7 @@ function haversine(a: [number, number], b: [number, number]) {
 export interface PixelValues { lon: number; lat: number; values: Record<string, number | null>; date?: string }
 
 interface Props {
+  soilMode?: boolean;
   incident: Incident | null;
   incidents: IncidentSummary[];
   aois: Aoi[];
@@ -423,7 +424,7 @@ export default function IncidentMap(props: Props) {
   const narrow = box.width > 0 && box.width < 560;
   const toolCount = box.height ? Math.max(3, Math.min(8, Math.floor((box.height - 24 - (showMini ? 160 : 40)) / 36))) : 8;
 
-  const layerDefs: { key: string; label: string; note?: string }[] = [
+  const layerDefs: { key: string; label: string; note?: string }[] = props.soilMode ? [{key:"rgb",label:"Soil site imagery (not processed)"}] : [
     { key: "rgb", label: "True colour" }, { key: "ndci", label: "Chlorophyll index (NDCI)" },
     { key: "ndci_z", label: "Chlorophyll vs past years" }, { key: "mci", label: "Chlorophyll peak (MCI)" },
     { key: "turbidity", label: "Turbidity (not calibrated)" }, { key: "anomaly", label: "Spectral anomaly score" },
@@ -498,7 +499,7 @@ export default function IncidentMap(props: Props) {
             );
           })}
           <div className="hud-kicker mb-1 mt-3">Context</div>
-          {[["assets", "Key assets (OpenStreetMap)"], ["stations", "EAD monitoring stations"], ["aois", "Monitored areas"]].map(([k, l]) => (
+          {[["assets", "Key assets (OpenStreetMap)"], ["stations", props.soilMode ? "Soil stations" : "EAD monitoring stations"], ["aois", "Monitored areas"]].map(([k, l]) => (
             <label key={k} className="flex items-center justify-between py-1 text-[12px] text-ink"><span>{l}</span>
               <input type="checkbox" checked={!!active[k]} onChange={(e) => setActive((a) => ({ ...a, [k]: e.target.checked }))} className="accent-[#2F7BFF]" /></label>
           ))}

@@ -259,6 +259,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const path = usePathname();
   const [navOpen, setNavOpen] = useState(false);
   useEffect(() => { setNavOpen(false); }, [path]);
+  if (path === "/" || path === "/soil" || path === "/soil/") return <main>{children}</main>;
   return (
     // fixed + inset-0 (not 100vh) so the frame fills the window under the 90 % CSS zoom in globals.css
     <div className="fixed inset-0 flex flex-col overflow-hidden">
@@ -278,3 +279,5 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
+
+

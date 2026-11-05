@@ -4,9 +4,9 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import AppShell from "@/components/shell/AppShell";
 
 export const metadata: Metadata = {
-  title: "BLUEBAN 813 - UAE Coastal Intelligence",
+  title: "ROOTS.AI - Live Soil Recognition",
   description:
-    "Closed-loop coastal incident intelligence for the UAE: Sentinel-2/3 monitoring, spectral diagnosis, human and field verification, and a governed learning loop. Built by Team Kanban.",
+    "ROOTS.AI soil evidence and illustrative carbon statements. Adapted from Team Kanban BLUEBAN 813.",
   icons: { icon: "/icon.png" },
 };
 
@@ -29,3 +29,5 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }
+
+

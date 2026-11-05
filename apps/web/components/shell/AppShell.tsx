@@ -76,8 +76,8 @@ function TopBar({ aois, models, onMenu }: { aois: Aoi[]; models: ModelRecord[]; 
       <Link href="/" className="flex min-w-0 shrink-0 items-center gap-3 xl:pr-2">
         <Image src={`${BASE_PATH}/brand/mark-96.png`} alt="BLUEBAN 813" width={46} height={46} priority className="h-9 w-9 sm:h-[46px] sm:w-[46px] short:h-9 short:w-9" />
         <div className="whitespace-nowrap leading-tight">
-          <div className="font-display text-[18px] font-extrabold tracking-[0.12em] text-ink sm:text-[22px] short:text-[19px]">BLUEBAN <span className="text-cyan">813</span></div>
-          <div className="hidden text-[10.5px] font-semibold tracking-[0.3em] text-muted sm:block">UAE COASTAL INTELLIGENCE</div>
+          <div className="font-display text-[18px] font-extrabold tracking-[0.12em] text-ink sm:text-[22px] short:text-[19px]">ROOTS.AI <span className="text-cyan">813</span></div>
+          <div className="hidden text-[10.5px] font-semibold tracking-[0.3em] text-muted sm:block">LIVE SOIL RECOGNITION</div>
         </div>
       </Link>
       <div className="hidden h-11 w-px shrink-0 bg-edge xl:block" />
@@ -91,7 +91,7 @@ function TopBar({ aois, models, onMenu }: { aois: Aoi[]; models: ModelRecord[]; 
           v={np ? `in ${np.inText}` : "n/a"} sub={np ? `${np.platform} · orbit ${np.orbit}` : "no schedule"} />
       </div>
       <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
-        <Link href="/judge" className="btn btn-primary whitespace-nowrap px-3 sm:px-[14px]" title="A guided three-minute tour of the whole loop, with real actions"><Presentation size={15} /><span className="hidden sm:inline">Judge Mode</span><span className="sm:hidden">Tour</span></Link>
+        <Link href="/soil" className="btn btn-primary whitespace-nowrap px-3 sm:px-[14px]" title="A guided three-minute tour of the whole loop, with real actions"><Presentation size={15} /><span className="hidden sm:inline">Soil tools</span><span className="sm:hidden">Tour</span></Link>
         <div className="hidden whitespace-nowrap text-right lg:block">
           <div className="hud-value text-[20px] font-semibold text-ink">{now ? now.toISOString().slice(11, 19) : "--:--:--"} <span className="text-[11px] text-muted">UTC</span></div>
           <div className="text-[10.5px] text-muted">{now ? now.toLocaleDateString("en-GB", { weekday: "short", day: "2-digit", month: "short", year: "numeric", timeZone: "UTC" }) : ""}</div>
@@ -211,7 +211,7 @@ function Footer({ incidents, aois, labels, models }: { incidents: IncidentSummar
   ];
   return (
     <footer className="flex h-[44px] shrink-0 items-center gap-4 overflow-hidden whitespace-nowrap border-t border-edge/70 bg-void/80 px-3 text-[11px] sm:px-4 short:h-[38px]">
-      <div className="hidden items-center gap-2 font-bold tracking-[0.16em] text-muted sm:flex"><UaeFlag size={12} /> UAE COASTAL MONITORING</div>
+      <div className="hidden items-center gap-2 font-bold tracking-[0.16em] text-muted sm:flex"><UaeFlag size={12} /> SOIL RESEARCH PROTOTYPE</div>
       <div className="flex min-w-0 items-center gap-4 xl:gap-6">
         {stats.map(([v, k, c, show]) => (
           <div key={k} className={`${show} items-baseline gap-1.5`}><span className="hud-value text-[15px] font-bold" style={{ color: c }}>{v}</span><span className="text-muted">{k}</span></div>
@@ -243,7 +243,7 @@ function NavDrawer({ open, onClose, children }: { open: boolean; onClose: () => 
             initial={{ x: reduce ? 0 : -280 }} animate={{ x: 0 }} exit={{ x: reduce ? 0 : -280 }} transition={{ duration: reduce ? 0 : 0.22, ease: "easeOut" }}
             onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between border-b border-edge px-4 py-3">
-              <span className="font-display text-[15px] font-bold tracking-[0.12em]">BLUEBAN <span className="text-cyan">813</span></span>
+              <span className="font-display text-[15px] font-bold tracking-[0.12em]">ROOTS.AI <span className="text-cyan">813</span></span>
               <button onClick={onClose} className="grid h-9 w-9 place-items-center rounded-md border border-line text-muted hover:text-ink" aria-label="Close navigation"><X size={17} /></button>
             </div>
             {children}
@@ -259,7 +259,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const path = usePathname();
   const [navOpen, setNavOpen] = useState(false);
   useEffect(() => { setNavOpen(false); }, [path]);
-  if (path === "/" || path === "/soil" || path === "/soil/") return <main>{children}</main>;
+
   return (
     // fixed + inset-0 (not 100vh) so the frame fills the window under the 90 % CSS zoom in globals.css
     <div className="fixed inset-0 flex flex-col overflow-hidden">
@@ -275,9 +275,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       <Footer {...d} />
       <NavDrawer open={navOpen} onClose={() => setNavOpen(false)}><MissionRail {...d} className="flex min-h-0 w-full flex-1" /></NavDrawer>
       <Toaster />
-      <IntroSequence />
+
     </div>
   );
 }
+
 
 
